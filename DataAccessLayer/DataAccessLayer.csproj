@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Database\InMemoryDatabase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repositories\EmployeeRepository.cs" />
     <Compile Include="Repositories\CompanyRepository.cs" />
   </ItemGroup>
   <ItemGroup />

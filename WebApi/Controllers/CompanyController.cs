@@ -93,7 +93,7 @@ namespace WebApi.Controllers
                 if (result)
                 {
                     Logger.Info($"Company with companycode: {companyDto.CompanyCode} is created now.");
-                    return Ok(result);
+                    return Ok(companyDto);
                 }
                 else
                 {
@@ -123,13 +123,13 @@ namespace WebApi.Controllers
 
             try
             {
+                companyDto.CompanyCode = companyCode;
                 var companyInfo = _mapper.Map<CompanyInfo>(companyDto);
-                companyInfo.CompanyCode = companyCode;
                 var result = await _companyService.SaveCompanyAsync(companyInfo);
                 if (result)
                 {
                     Logger.Info($"Company with companycode: {companyCode} is updated now.");
-                    return Ok(result);
+                    return Ok(companyDto);
                 }
                 else
                 {

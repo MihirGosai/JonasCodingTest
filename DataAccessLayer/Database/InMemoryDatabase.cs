@@ -11,11 +11,14 @@ namespace DataAccessLayer.Database
 {
 	public class InMemoryDatabase<T> : IDbWrapper<T> where T : DataEntity
 	{
-		private Dictionary<Tuple<string, string>, DataEntity> DatabaseInstance;
+		private static Dictionary<Tuple<string, string>, DataEntity> DatabaseInstance;
 
 		public InMemoryDatabase()
 		{
-			DatabaseInstance = new Dictionary<Tuple<string, string>, DataEntity>();
+			if(DatabaseInstance == null)
+			{
+                DatabaseInstance = new Dictionary<Tuple<string, string>, DataEntity>();
+            }
 		}
 
 		public bool Insert(T data)
@@ -79,14 +82,26 @@ namespace DataAccessLayer.Database
 		{
 			try
 			{
-				var entities = FindAll();
-				var entity = entities.Where(expression.Compile());
-				foreach (var dataEntity in entity)
-				{
-					DatabaseInstance.Remove(Tuple.Create(dataEntity.SiteId, dataEntity.CompanyCode));
-				}
-				
-				return true;
+                var entities = FindAll();  // Retrieve all entities
+                var entityToDelete = entities.Where(expression.Compile());  // Filter entities based on the expression
+
+                // Create a list to store the keys that need to be removed
+                var keysToRemove = new List<Tuple<string, string>>();
+
+                // Collect the keys of the entities that match the expression
+                foreach (var dataEntity in entityToDelete)
+                {
+                    var key = Tuple.Create(dataEntity.SiteId, dataEntity.CompanyCode);
+                    keysToRemove.Add(key);
+                }
+
+                // Remove the entities from the database outside of the enumeration
+                foreach (var key in keysToRemove)
+                {
+                    DatabaseInstance.Remove(key);
+                }
+
+                return true;
 			}
 			catch
 			{

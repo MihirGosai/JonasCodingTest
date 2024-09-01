@@ -10,6 +10,7 @@ using WebApi.Models;
 
 namespace WebApi.Controllers
 {
+    [RoutePrefix("api/employee")]
     public class EmployeeController : ApiController
     {
         private readonly IEmployeeService _employeeService;
@@ -25,6 +26,8 @@ namespace WebApi.Controllers
         }
 
         // GET api/<controller>
+        [HttpGet]
+        [Route("")]
         public async Task<IHttpActionResult> GetAll()
         {
             Logger.Info("Fetching all employees");
@@ -64,6 +67,8 @@ namespace WebApi.Controllers
         }
 
         // GET api/<controller>/5
+        [HttpGet]
+        [Route("{employeeCode}")]
         public async Task<IHttpActionResult> Get(string employeeCode)
         {
             try
@@ -104,6 +109,8 @@ namespace WebApi.Controllers
         }
 
         // POST api/<controller>
+        [HttpPost]
+        [Route("")]
         public async Task<IHttpActionResult> Post([FromBody] EmployeeDto employeeDto)
         {
             if (employeeDto == null)
@@ -121,7 +128,7 @@ namespace WebApi.Controllers
                 if (result)
                 {
                     Logger.Info($"Employee with employee code: {employeeDto.EmployeeCode} is created now.");
-                    return Ok(result);
+                    return Ok(employeeDto);
                 }
                 else
                 {
@@ -137,6 +144,8 @@ namespace WebApi.Controllers
         }
 
         // PUT api/<controller>/5
+        [HttpPut]
+        [Route("{employeeCode}")]
         public async Task<IHttpActionResult> Put(string employeeCode, [FromBody] EmployeeDto employeeDto)
         {
             if (employeeDto == null)
@@ -149,13 +158,13 @@ namespace WebApi.Controllers
 
             try
             {
+                employeeDto.EmployeeCode = employeeCode;
                 var employeeInfo = _mapper.Map<EmployeeInfo>(employeeDto);
-                employeeInfo.EmployeeCode = employeeCode;
                 var result = await _employeeService.SaveEmployeeAsync(employeeInfo);
                 if (result)
                 {
                     Logger.Info($"Employee with employee code: {employeeCode} is updated now.");
-                    return Ok(result);
+                    return Ok(employeeDto);
                 }
                 else
                 {
@@ -171,6 +180,8 @@ namespace WebApi.Controllers
         }
 
         // DELETE api/<controller>/5
+        [HttpDelete]
+        [Route("{employeeCode}")]
         public async Task<IHttpActionResult> Delete(string employeeCode)
         {
             Logger.Info($"Going to delete copmany with companycode: {employeeCode}.");

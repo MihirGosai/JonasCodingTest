@@ -57,7 +57,8 @@ namespace DataAccessLayer.Repositories
 
         public async Task<bool> DeleteCompanyAsync(string companyCode)
         {
-            return await _companyDbWrapper.DeleteAsync(c => c.CompanyCode.Equals(companyCode));
+            var result = await _companyDbWrapper.DeleteAsync(c => c.CompanyCode.Equals(companyCode));
+            return result;
         }
     }
 }
